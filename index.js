@@ -1,4 +1,5 @@
-var exec = require('child_process').exec;
+var exec = require('child_process').exec,
+    spawn = require('child_process').spawn;
 
 var create = function() {
   return new gs();
@@ -31,6 +32,30 @@ gs.prototype.exec = function(callback) {
   });
 };
 
+gs.prototype.writetostream = function(writestream, callback){
+  var self = this,
+      errorString = '';
+
+  this.options.push('-sOutputFile=%stdout');
+  this.options.push(this._input);
+
+  var gsProcess = spawn('gs', this.options);
+
+  gsProcess.stderr.on('data', function (data) {
+    errorString += data;   
+  });
+
+  gsProcess.on('close', function (code) {
+    if (code !== 0) {
+      callback({msg: errorString, exitcode: code});
+    } else {
+      callback(null);
+    }
+  });
+
+  gsProcess.stdout.pipe(writestream);
+};
+
 gs.prototype.input = function(file) {
   this._input = file;
   return this;
@@ -40,10 +65,55 @@ gs.prototype.jpegq = function(value) {
   value = value || 75;
   this.options.push('-dJPEGQ=' + value);
   return this;
+}
+
+gs.prototype.firstpage = function(value) {
+  this.options.push('-dFirstPage#' + value);
+  return this;
 };
+
+gs.prototype.lastpage = function(value) {
+  this.options.push('-dLastPage#' + value);
+  return this;
+};
+
+gs.prototype.aligntopixels = function(value) {
+  this.options.push('-dAlignToPixels#' + value);
+  return this;
+};
+
+gs.prototype.textalphabits = function(value) {
+  this.options.push('-dTextAlphaBits#' + value);
+  return this;
+};
+
+gs.prototype.gridfitt = function(value) {
+  this.options.push('-dGridFitTT#' + value);
+  return this;
+};
+
+gs.prototype.graphicsalphabits = function(value) {
+  this.options.push('-dGraphicsAlphaBits#' + value);
+  return this;
+};
+
+gs.prototype.epscrop = function() {
+  this.options.push('-dEPSCrop');
+  return this;
+}
+
+gs.prototype.usecropbox = function() {
+  this.options.push('-dUseCropBox');
+  return this;
+}
 
 gs.prototype.nopause = function() {
   this.options.push('-dNOPAUSE');
+  return this;
+}
+
+gs.prototype.safer = function() {
+  this.options.push('-dSAFER');
   return this;
 };
 
@@ -58,6 +128,11 @@ gs.prototype.q = gs.prototype.quiet;
 
 gs.prototype.quiet = function() {
   this.options.push('-dQUIET');
+  return this;
+};
+
+gs.prototype.g = function(xres, yres) {
+  this.options.push('-g' + xres + (yres ? 'x' + yres : ''));
   return this;
 };
 

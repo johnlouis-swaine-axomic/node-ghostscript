@@ -27,6 +27,16 @@ Wrapper for ghostscript in node.js.
         }
       });
 
+    // OR
+      .writetostream(writeableStream, function(err) {
+        if (!err) {
+          console.log(success);
+          //dostuff with write stream
+        } else {
+          console.log(err);
+        }
+      });
+
 ## API
 
 * `batch`
@@ -38,6 +48,16 @@ Wrapper for ghostscript in node.js.
 * `output`
 * `r`
 * `quiet`
+* `firstpage`
+* `lastpage`
+* `aligntopixels`
+* `textalphabits`
+* `graphicsalphabits`
+* `epscrop`
+* `usecropbox`
+* `gridfitt`
+* `gridfitt`
+* `writetostream`
 
 ## Test
 
