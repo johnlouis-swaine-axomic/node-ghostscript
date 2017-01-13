@@ -102,6 +102,16 @@ gs.prototype.epscrop = function() {
   return this;
 }
 
+gs.prototype.epsfitpage = function() {
+  this.options.push('-dEPSFitPage');
+  return this;
+}
+
+gs.prototype.translate = function(x, y) {
+    this.options.push(x+' '+y+' translate');
+    return this;
+}
+
 gs.prototype.usecropbox = function() {
   this.options.push('-dUseCropBox');
   return this;
